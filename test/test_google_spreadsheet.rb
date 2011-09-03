@@ -17,10 +17,12 @@ class TC_GoogleSpreadsheet < Test::Unit::TestCase
       if USE_SAVED_SESSION
         session = GoogleSpreadsheet.saved_session
       else
-        highline = HighLine.new()
-        mail = highline.ask("Mail: ")
-        password = highline.ask("Password: "){ |q| q.echo = false }
-        session = GoogleSpreadsheet.login(mail, password)
+          unless session = login_from_fixtures
+              highline = HighLine.new()
+              mail = highline.ask("Mail: ")
+              password = highline.ask("Password: "){ |q| q.echo = false }
+              session = GoogleSpreadsheet.login(mail, password)
+          end
       end
 
       ss_title = "google-spreadsheet-ruby test " + Time.now.strftime("%Y-%m-%d-%H-%M-%S")
@@ -94,6 +96,19 @@ class TC_GoogleSpreadsheet < Test::Unit::TestCase
       assert_nil(session.spreadsheets("title" => ss_copy_title).
         find(){ |s| s.title == ss_copy_title })
       ss.delete(true)
+    end
+
+    #######
+    private
+    #######
+
+    def login_from_fixtures
+      begin
+          fixtures = YAML.load_file(File.join(File.dirname(__FILE__), 'account.yml'))
+      rescue
+          return false
+      end
+      GoogleSpreadsheet.login(fixtures["username"], fixtures['password'])
     end
 
 end
