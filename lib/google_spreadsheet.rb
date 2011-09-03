@@ -371,7 +371,7 @@ module GoogleSpreadsheet
     class Spreadsheet
 
         include(Util)
-        
+
         SUPPORTED_EXPORT_FORMAT = Set.new(["xls", "csv", "pdf", "ods", "tsv", "html"])
 
         def initialize(session, worksheets_feed_url, title = nil) #:nodoc:
@@ -402,12 +402,12 @@ module GoogleSpreadsheet
           end
           return $1
         end
-        
+
         # Spreadsheet feed URL of the spreadsheet.
         def spreadsheet_feed_url
           return "https://spreadsheets.google.com/feeds/spreadsheets/private/full/#{self.key}"
         end
-        
+
         # URL which you can open the spreadsheet in a Web browser with.
         #
         # e.g. "http://spreadsheets.google.com/ccc?key=pz7XtlQC-PYx-jrVMJErTcg"
@@ -442,7 +442,7 @@ module GoogleSpreadsheet
           end
           return @spreadsheet_feed_entry
         end
-        
+
         # <entry> element of document list feed as Nokogiri::XML::Element.
         #
         # Set params[:reload] to true to force reloading the feed.
@@ -453,7 +453,7 @@ module GoogleSpreadsheet
           end
           return @document_feed_entry
         end
-        
+
         # Creates copy of this spreadsheet with the given title.
         def duplicate(new_title = nil)
           new_title ||= (self.title ? "Copy of " + self.title : "Untitled")
@@ -496,9 +496,9 @@ module GoogleSpreadsheet
 
           @session.request(:put, edit_url, :data => xml, :auth => :writely)
         end
-        
+
         alias title= rename
-        
+
         # Exports the spreadsheet in +format+ and returns it as String.
         #
         # +format+ can be either "xls", "csv", "pdf", "ods", "tsv" or "html".
@@ -510,7 +510,7 @@ module GoogleSpreadsheet
               "?key=#{key}&exportFormat=#{format}#{gid_param}"
           return @session.request(:get, url, :response_type => :raw)
         end
-        
+
         # Exports the spreadsheet in +format+ as a local file.
         #
         # +format+ can be either "xls", "csv", "pdf", "ods", "tsv" or "html".
@@ -530,7 +530,7 @@ module GoogleSpreadsheet
             f.write(export_as_string(format, worksheet_index))
           end
         end
-        
+
         # Returns worksheets of the spreadsheet as array of GoogleSpreadsheet::Worksheet.
         def worksheets
           doc = @session.request(:get, @worksheets_feed_url)
@@ -573,17 +573,17 @@ module GoogleSpreadsheet
         end
 
     end
-    
+
     # Use GoogleSpreadsheet::Session#collection_by_url to get GoogleSpreadsheet::Collection object.
     class Collection
 
         include(Util)
-        
+
         def initialize(session, collection_feed_url) #:nodoc:
           @session = session
           @collection_feed_url = collection_feed_url
         end
-        
+
         # Adds the given GoogleSpreadsheet::Spreadsheet to the collection.
         def add(spreadsheet)
           contents_url = "#{@collection_feed_url}/contents"
@@ -597,11 +597,11 @@ module GoogleSpreadsheet
               :post, contents_url, :data => xml, :header => header, :auth => :writely)
           return nil
         end
-        
+
         # TODO Add other operations.
 
     end
-    
+
     # DEPRECATED: Table and Record feeds are deprecated and they will not be available after
     # March 2012.
     #
